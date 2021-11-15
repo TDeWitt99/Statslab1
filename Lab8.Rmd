@@ -1,0 +1,81 @@
+---
+title: "Lab 8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Write a function to convert a vector of raw-scores into z-scores. The function should have inputs for the vector, the mean and sd of the normal distribution, and should return a vector of zscores. 
+```{r}
+to_zscores <- function(raw,mu,sd){
+  zscores <- (raw-mu)/sd
+  return(zscores)
+}
+some_numbers <- c(1,2,3,4,5)
+to_zscores(some_numbers,5,1)
+to_zscores_b <- function(raw,mu=NULL,sdev=NULL){
+  if(is.null(mu) == TRUE) mu <- mean(raw)
+  if(is.null(sdev) == TRUE) sdev <- sd(raw)
+  zscores <- (raw-mu)/sdev
+  return(zscores)
+}
+to_zscores_b(some_numbers, mu = 5, sdev=1)
+to_zscores_b(some_numbers)
+```
+```Base R does not have a function for a z-test. Write a function to accomplish a one-sample z-test. Remember, a one-sample z test is used to compare the probability of obtaining the sample mean (or larger or smaller) if it came from a known normal distribution. 
+```{r}
+z.test <- function(sample_mean,sample_size,mu,sigma){
+  smpl_dist_mean <- mu
+  smpl_dist_sd <- sigma/sqrt(sample_size)
+  
+  p_value <- pnorm(sample_mean,smpl_dist_mean,smpl_dist_sd, lower.tail=FALSE)
+  return(p_value)
+}
+z.test(sample_mean = 50,
+       sample_size = 25,
+       mu = 40,
+       sigma = 7)
+##
+z.test <- function(sample_mean,sample_size,mu,sigma, two.tailed=TRUE){
+  smpl_dist_mean <- mu
+  smpl_dist_sd <- sigma/sqrt(sample_size)
+  
+  p_value <- pnorm(sample_mean,smpl_dist_mean,smpl_dist_sd, lower.tail=FALSE)
+  
+  if(two.tailed == TRUE) p_value <- p_value*2
+  return(p_value)
+}
+z.test(sample_mean = 37,
+       sample_size = 5,
+       mu = 40,
+       sigma = 7,
+       two.tailed=FALSE)
+##
+z.test <- function(sample_mean,
+                   sample_size,
+                   mu,
+                   sigma, 
+                   two.tailed=TRUE){
+    smpl_dist_mean <- mu
+    smpl_dist_sd <- sigma/sqrt(sample_size)
+    
+    abs_difference <- abs(sample_mean - mu)
+    
+    p_value <- pnorm((mu+abs_difference),smpl_dist_mean,smpl_dist_sd, lower.tail=FALSE)
+    
+    if(two.tailed == TRUE) p_value <- p_value*2
+    return(p_value)
+}
+z.test(sample_mean = 37,
+       sample_size = 5,
+       mu = 40,
+       sigma = 7,
+       two.tailed=FALSE)
+```
+```
